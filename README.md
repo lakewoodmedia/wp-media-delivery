@@ -1,136 +1,81 @@
 # WP Media Delivery
 
-Offload WordPress media to Amazon S3, Cloudflare R2, DigitalOcean Spaces, Min.io or Wasabi.
+A WordPress plugin that offloads media to cloud storage providers like Amazon S3, Cloudflare R2, DigitalOcean Spaces, Min.io, or Wasabi, with support for WebP conversion and optimizers like ShortPixel.
 
-**WP Media Delivery** helps you optimize your WordPress media handling by automatically uploading your media files to S3-compatible cloud storage services.
+## Description
 
-Struggling with server space limitations? Want to improve your site's performance by serving media through a CDN? This plugin handles the technical work of migrating your media to the cloud, rewriting URLs, and maintaining compatibility with your existing content.
+WP Media Delivery helps you optimize your WordPress site by offloading media files to cloud storage providers. This reduces the load on your server, improves performance, and can reduce costs. The plugin supports:
 
-## Key Benefits
-
-* Reduce server storage requirements and costs
-* Decrease server load when serving media files
-* Improve global site loading speeds when combined with CDN services
-* Maintain full compatibility with WordPress media functions
-* No need to modify existing content - URLs are automatically rewritten
-
-## Supported Cloud Providers
-
-* **Amazon S3** - The industry standard object storage service
-* **Cloudflare R2** - S3-compatible storage with zero egress fees
-* **DigitalOcean Spaces** - Simple object storage from DigitalOcean
-* **MinIO** - Self-hosted, S3-compatible object storage
-* **Wasabi** - Hot cloud storage with predictable pricing
+- Automatic uploading of new media to cloud storage
+- WebP conversion for images
+- Offloading existing media via bulk operations
+- Integration with ShortPixel and Imagify optimizers
+- Option to delete local files after offloading
+- Custom domain support for URLs
 
 ## Features
 
-### Current Features
-* **Automatic Offloading** - New media uploads are automatically sent to your cloud storage
-* **Bulk Migration** - Easily move existing media to the cloud (50 files per batch)
-* **Smart URL Rewriting** - All media URLs are automatically rewritten to serve from cloud storage
-* **File Versioning** - Add unique timestamps to media paths to prevent caching issues
-* **Flexible Retention** - Choose to keep local copies or remove them after successful offloading
-* **Mirror Deletion** - Optionally remove files from cloud storage when deleted from WordPress
-* **Custom Paths** - Configure custom path prefixes in your cloud storage
-* **Developer-Friendly** - Action hooks for extending functionality
-* **CloudFront integration** - Deliver media through Amazon's CDN
-* **Support for custom domains** - Use your own domain for media delivery
-* **All Media Types Support** - Handles all WordPress media types, not just images
-* **Page Builder Compatible** - Works with popular page builders like Elementor and Bricks through standard WordPress hooks
-* **Easy Administration** - Simple settings page with intuitive configuration options
-
-### Planned Features
-* **WebP Conversion** - Automatically create and serve WebP versions of uploaded images for modern browsers _(coming soon)_
-* **ShortPixel Integration** - Support ShortPixel optimization workflow, offloading images after compression _(coming soon)_
-* **Imagify Integration** - Support Imagify optimization workflow, offloading images after compression _(coming soon)_
-* **Original Image Removal** - Option to remove original images when using WebP _(coming soon)_
-* **Push/Pull Media Tools** - Tools to push and pull media between WordPress and cloud storage _(coming soon)_
-* **Advanced Progress Tracking** - Visual progress indicator for bulk offloading operations _(coming soon)_
+- **Seamless Cloud Integration**: Automatically uploads media files to your preferred cloud provider and serves them from their global network
+- **Multiple Provider Support**: Works with Amazon S3, Cloudflare R2, DigitalOcean Spaces, Min.io, and Wasabi
+- **WebP Conversion**: Creates and serves WebP versions of uploaded images for modern browsers, improving load times
+- **Page Builder Compatible**: Works with popular page builders like Elementor and Bricks through standard WordPress hooks
+- **Local Cleanup**: Optionally removes media files from your local server after successful offloading
+- **Original Image Removal**: Option to remove original images when using WebP to further reduce storage requirements
+- **All Media Types Support**: Handles all WordPress media types, not just images
+- **Cloud Cleanup**: Automatically deletes files from cloud storage when they're removed from WordPress
+- **Push/Pull Media**: Tools to push and pull media between WordPress and cloud storage
+- **ShortPixel Integration**: Supports ShortPixel optimization workflow, offloading images after they've been compressed
+- **Imagify Integration**: Supports Imagify optimization workflow, offloading images after they've been compressed
+- **Batch Processing**: Handles large media libraries (30,000+ images) through an efficient background batch processing system
+- **Easy Administration**: Simple settings page with intuitive configuration options
+- **Progress Tracking**: Visual progress indicator for bulk offloading operations
 
 ## Requirements
 
-- WordPress 5.6 or higher
-- PHP 8.1 or higher
-- Composer (for development)
+* WordPress 5.6 or higher
+* PHP 8.1 or higher
+* Cloud storage account with API access
+* Composer (for installation)
+* GD library for PHP (for WebP conversion)
 
 ## Installation
 
-1. Upload the plugin files to the `/wp-content/plugins/wp-media-delivery` directory, or install the plugin through the WordPress plugins screen.
-2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Add your cloud provider credentials to `wp-config.php` (see configuration examples below)
-4. Configure the plugin by going to the WP Media Delivery settings page.
-5. Test your connection and start offloading media
+1. Upload the plugin files to the `/wp-content/plugins/wp-media-delivery` directory, or install the plugin through the WordPress plugins screen directly.
+2. Activate the plugin through the 'Plugins' screen in WordPress
+3. Use the Settings->WP Media Delivery screen to configure the plugin
 
-## Configuration
+## Configuration Constants
 
-For security, cloud provider credentials are stored in your `wp-config.php` file rather than the database.
+You can define the following constants in your wp-config.php file to override the plugin settings:
 
-**[Cloudflare R2](https://developers.cloudflare.com/r2/) Configuration**
 ```php
-define('WPMD_CLOUDFLARE_R2_KEY', 'your-access-key');
-define('WPMD_CLOUDFLARE_R2_SECRET', 'your-secret-key');
-define('WPMD_CLOUDFLARE_R2_BUCKET', 'your-bucket-name');
-define('WPMD_CLOUDFLARE_R2_DOMAIN', 'your-domain-url');
-define('WPMD_CLOUDFLARE_R2_ENDPOINT', 'your-endpoint-url');
+// General Settings
+define('WPMD_PROVIDER', 's3');  // Options: 's3', 'r2', 'spaces', 'minio', 'wasabi'
+define('WPMD_REGION', 'us-east-1');  // Region for your cloud provider
+define('WPMD_ACCESS_KEY', 'your-access-key');
+define('WPMD_SECRET_KEY', 'your-secret-key');
+define('WPMD_BUCKET', 'your-bucket-name');
+define('WPMD_ENDPOINT', 'https://custom-endpoint.com');  // For R2, Spaces, Min.io, Wasabi
+
+// Feature Toggles
+define('WPMD_DELETE_LOCAL', true);  // Delete local files after offloading
+define('WPMD_ENABLE_WEBP', true);  // Enable WebP conversion
+define('WPMD_DELETE_ORIGINAL', false);  // Delete original images when using WebP
+define('WPMD_CUSTOM_DOMAIN', 'https://cdn.yourdomain.com');  // Custom domain for URLs
 ```
 
-**[DigitalOcean Spaces](https://www.digitalocean.com/products/spaces) Configuration**
-```php
-define('WPMD_DOS_KEY', 'your-access-key');
-define('WPMD_DOS_SECRET', 'your-secret-key');
-define('WPMD_DOS_BUCKET', 'your-bucket-name');
-define('WPMD_DOS_DOMAIN', 'your-domain-url');
-define('WPMD_DOS_ENDPOINT', 'your-endpoint-url');
-```
+## Usage
 
-**[MinIO](https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html) Configuration**
-```php
-define('WPMD_MINIO_KEY', 'your-access-key');
-define('WPMD_MINIO_SECRET', 'your-secret-key');
-define('WPMD_MINIO_BUCKET', 'your-bucket-name');
-define('WPMD_MINIO_DOMAIN', 'your-domain-url');
-define('WPMD_MINIO_ENDPOINT', 'your-endpoint-url');
-```
-
-**[Amazon S3](https://aws.amazon.com/s3/) Configuration**
-```php
-define('WPMD_AWS_KEY', 'your-access-key');
-define('WPMD_AWS_SECRET', 'your-secret-key');
-define('WPMD_AWS_BUCKET', 'your-bucket-name');
-define('WPMD_AWS_REGION', 'your-bucket-region');
-define('WPMD_AWS_DOMAIN', 'your-domain-url');
-```
-
-**[Wasabi](https://docs.wasabi.com/docs/creating-a-new-access-key) Configuration**
-```php
-define('WPMD_WASABI_KEY', 'your-access-key');
-define('WPMD_WASABI_SECRET', 'your-secret-key');
-define('WPMD_WASABI_BUCKET', 'your-bucket-name');
-define('WPMD_WASABI_REGION', 'your-bucket-region');
-define('WPMD_WASABI_DOMAIN', 'your-domain-url');
-```
-
-## Development
-
-### Setup
-
-1. Clone this repository
-2. Run `composer install` to install dependencies
-
-### Building
-
-To build the plugin for release:
-
-```
-./build.sh
-```
-
-This will create a zip file in the `/releases` directory.
-
-## License
-
-This plugin is licensed under GPL v2 or later.
+1. After activation, go to the plugin settings page
+2. Select your preferred cloud storage provider
+3. Enter your credentials for the selected provider
+4. Configure additional settings as needed
+5. Start offloading your media to the cloud!
 
 ## Credits
 
-Developed by [Fuunction](https://fuunction.agency) 
+This plugin is a fork of [Advanced Media Offloader](https://wordpress.org/support/plugin/advanced-media-offloader/) by WP Fitter. We extend our thanks to the original developers for their work.
+
+## License
+
+This plugin is licensed under the GPL v2 or later.

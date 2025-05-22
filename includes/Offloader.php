@@ -1,18 +1,18 @@
 <?php
 
-namespace WP_Media_Delivery;
+namespace Advanced_Media_Offloader;
 
-use WP_Media_Delivery\Abstracts\S3_Provider;
-use WP_Media_Delivery\Traits\OffloaderTrait;
-use WP_Media_Delivery\Interfaces\ObserverInterface;
-use WP_Media_Delivery\Observers\AttachmentUrlObserver;
-use WP_Media_Delivery\Observers\AttachmentDeleteObserver;
-use WP_Media_Delivery\Observers\OffloadStatusObserver;
-use WP_Media_Delivery\Observers\ImageSrcsetObserver;
-use WP_Media_Delivery\Observers\ImageSrcsetMetaObserver;
-use WP_Media_Delivery\Observers\AttachmentUploadObserver;
-use WP_Media_Delivery\Observers\PostContentImageTagObserver;
-use WP_Media_Delivery\Observers\AttachmentUpdateObserver;
+use Advanced_Media_Offloader\Abstracts\S3_Provider;
+use Advanced_Media_Offloader\Traits\OffloaderTrait;
+use Advanced_Media_Offloader\Interfaces\ObserverInterface;
+use Advanced_Media_Offloader\Observers\AttachmentUrlObserver;
+use Advanced_Media_Offloader\Observers\AttachmentDeleteObserver;
+use Advanced_Media_Offloader\Observers\OffloadStatusObserver;
+use Advanced_Media_Offloader\Observers\ImageSrcsetObserver;
+use Advanced_Media_Offloader\Observers\ImageSrcsetMetaObserver;
+use Advanced_Media_Offloader\Observers\AttachmentUploadObserver;
+use Advanced_Media_Offloader\Observers\PostContentImageTagObserver;
+use Advanced_Media_Offloader\Observers\AttachmentUpdateObserver;
 
 class Offloader
 {

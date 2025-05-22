@@ -1,8 +1,8 @@
 <?php
 
-namespace WP_Media_Delivery\Integrations;
+namespace Advanced_Media_Offloader\Integrations;
 
-use WP_Media_Delivery\Abstracts\S3_Provider;
+use Advanced_Media_Offloader\Abstracts\S3_Provider;
 use WPFitter\Aws\S3\S3Client;
 
 class DigitalOceanSpaces extends S3_Provider
@@ -23,33 +23,33 @@ class DigitalOceanSpaces extends S3_Provider
 	{
 		return new S3Client([
 			'version' => 'latest',
-			'endpoint' => defined("WPMD_DOS_ENDPOINT") ? WPMD_DOS_ENDPOINT : '',
-			'region' => defined("WPMD_DOS_REGION") ? WPMD_DOS_REGION : 'us-east-1',
+			'endpoint' => defined("ADVMO_DOS_ENDPOINT") ? ADVMO_DOS_ENDPOINT : '',
+			'region' => defined("ADVMO_DOS_REGION") ? ADVMO_DOS_REGION : 'us-east-1',
 			'credentials' => [
-				'key' => defined("WPMD_DOS_KEY") ? WPMD_DOS_KEY : '',
-				'secret' => defined("WPMD_DOS_SECRET") ? WPMD_DOS_SECRET : '',
+				'key' => defined("ADVMO_DOS_KEY") ? ADVMO_DOS_KEY : '',
+				'secret' => defined("ADVMO_DOS_SECRET") ? ADVMO_DOS_SECRET : '',
 			]
 		]);
 	}
 
 	public function getBucket()
 	{
-		return defined("WPMD_DOS_BUCKET") ? WPMD_DOS_BUCKET : null;
+		return defined("ADVMO_DOS_BUCKET") ? ADVMO_DOS_BUCKET : null;
 	}
 
 	public function getDomain()
 	{
-		return defined('WPMD_DOS_DOMAIN') ? trailingslashit(WPMD_DOS_DOMAIN) : '';
+		return defined('ADVMO_DOS_DOMAIN') ? trailingslashit(ADVMO_DOS_DOMAIN) : '';
 	}
 
 	public function credentialsField()
 	{
 		$requiredConstants = [
-			'WPMD_DOS_KEY' => 'Your DigitalOcean Spaces Access Key',
-			'WPMD_DOS_SECRET' => 'Your DigitalOcean Spaces Secret Key',
-			'WPMD_DOS_ENDPOINT' => 'Your DigitalOcean Spaces Endpoint URL',
-			'WPMD_DOS_BUCKET' => 'Your DigitalOcean Spaces Bucket Name',
-			'WPMD_DOS_DOMAIN' => 'Your Custom Domain',
+			'ADVMO_DOS_KEY' => 'Your DigitalOcean Spaces Access Key',
+			'ADVMO_DOS_SECRET' => 'Your DigitalOcean Spaces Secret Key',
+			'ADVMO_DOS_ENDPOINT' => 'Your DigitalOcean Spaces Endpoint URL',
+			'ADVMO_DOS_BUCKET' => 'Your DigitalOcean Spaces Bucket Name',
+			'ADVMO_DOS_DOMAIN' => 'Your Custom Domain',
 		];
 
 		echo $this->getCredentialsFieldHTML($requiredConstants);

@@ -30,13 +30,14 @@ class AdminFooterTexts implements ObserverInterface
 
     public function run($text)
     {
-        return advmo_get_copyright_text();
+        // Return the original text
+        return $text;
     }
 
     public function admin_footer_version_text($text)
     {
-        global $advmo;
-        return "Version " . $advmo->version;
+        // Return the original version text
+        return $text;
     }
 
     // Prevent cloning of the instance

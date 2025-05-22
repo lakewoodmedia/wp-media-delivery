@@ -1,13 +1,12 @@
 <?php
 /*
  * Plugin Name:       WP Media Delivery
- * Plugin URI:        https://wpfitter.com/plugins/wp-media-delivery/
  * Description:       Offload WordPress media to Amazon S3, Cloudflare R2, DigitalOcean Spaces, Min.io or Wasabi.
- * Version:           1.0.0-beta
+ * Version:           1.0.0-rc
  * Requires at least: 5.6
  * Requires PHP:      8.1
  * Author:            Fuunction
- * Author URI:        https://fuunction.agency/
+ * Author URI:        https://fuunction.agency
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       wp-media-delivery
@@ -18,11 +17,11 @@ if (!defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-if (!class_exists('WPMD')) {
+if (!class_exists('ADVMO')) {
 	/**
-	 * The main WPMD class
+	 * The main ADVMO class
 	 */
-	class WPMD
+	class ADVMO
 	{
 
 		/** @var Container */
@@ -38,7 +37,7 @@ if (!class_exists('WPMD')) {
 		/**
 		 * The offloader instance.
 		 *
-		 * @var WP_Media_Delivery\Offloader
+		 * @var Advanced_Media_Offloader\Offloader
 		 */
 		public $offloader;
 
@@ -50,7 +49,7 @@ if (!class_exists('WPMD')) {
 		public $data = array();
 
 		/**
-		 * A dummy constructor to ensure WP Media Delivery is only setup once.
+		 * A dummy constructor to ensure WP Fitter Media Offloader is only setup once.
 		 *
 		 * @since   1.0.0
 		 *
@@ -63,7 +62,7 @@ if (!class_exists('WPMD')) {
 		}
 
 		/**
-		 * Sets up the WP Media Delivery
+		 * Sets up the Advanced Media Offloader
 		 *
 		 * @since   1.0.0
 		 *
@@ -73,12 +72,12 @@ if (!class_exists('WPMD')) {
 		{
 
 			// Define constants.
-			$this->define('WPMD', true);
-			$this->define('WPMD_PATH', plugin_dir_path(__FILE__));
-			$this->define('WPMD_URL', plugin_dir_url(__FILE__));
-			$this->define('WPMD_BASENAME', plugin_basename(__FILE__));
-			$this->define('WPMD_VERSION', $this->version);
-			$this->define('WPMD_API_VERSION', 1);
+			$this->define('ADVMO', true);
+			$this->define('ADVMO_PATH', plugin_dir_path(__FILE__));
+			$this->define('ADVMO_URL', plugin_dir_url(__FILE__));
+			$this->define('ADVMO_BASENAME', plugin_basename(__FILE__));
+			$this->define('ADVMO_VERSION', $this->version);
+			$this->define('ADVMO_API_VERSION', 1);
 
 			// Register activation hook.
 			register_activation_hook(__FILE__, array($this, 'plugin_activated'));
@@ -94,21 +93,21 @@ if (!class_exists('WPMD')) {
 		private function setup_container()
 		{
 			// Include autoloader
-			if (file_exists(WPMD_PATH . 'vendor/scoper-autoload.php')) {
-				require_once WPMD_PATH . 'vendor/scoper-autoload.php';
-			} elseif (file_exists(WPMD_PATH . 'vendor/autoload.php')) {
-				require_once WPMD_PATH . 'vendor/autoload.php';
+			if (file_exists(ADVMO_PATH . 'vendor/scoper-autoload.php')) {
+				require_once ADVMO_PATH . 'vendor/scoper-autoload.php';
+			} elseif (file_exists(ADVMO_PATH . 'vendor/autoload.php')) {
+				require_once ADVMO_PATH . 'vendor/autoload.php';
 			}
 
-			$this->container = new \WP_Media_Delivery\Core\Container();
+			$this->container = new \Advanced_Media_Offloader\Core\Container();
 
 			$this->container->register('cloud_provider_factory', function ($c) {
-				return new \WP_Media_Delivery\Factories\CloudProviderFactory();
+				return new \Advanced_Media_Offloader\Factories\CloudProviderFactory();
 			});
 
 			// Register core services
 			$this->container->register('cloud_provider', function ($c) {
-				$cloud_provider_key = wpmd_get_cloud_provider_key();
+				$cloud_provider_key = advmo_get_cloud_provider_key();
 				if (empty($cloud_provider_key)) {
 					return null;
 				}
@@ -123,21 +122,21 @@ if (!class_exists('WPMD')) {
 
 			$this->container->register('offloader', function ($c) {
 				if ($c->has('cloud_provider') && $c->get('cloud_provider') !== null) {
-					return \WP_Media_Delivery\Offloader::get_instance($c->get('cloud_provider'));
+					return \Advanced_Media_Offloader\Offloader::get_instance($c->get('cloud_provider'));
 				}
 				return null;
 			});
 
 			$this->container->register('settings_page', function ($c) {
-				return \WP_Media_Delivery\Admin\GeneralSettings::create($c->get('cloud_provider_factory'));
+				return \Advanced_Media_Offloader\Admin\GeneralSettings::create($c->get('cloud_provider_factory'));
 			});
 
 			$this->container->register('media_overview_page', function ($c) {
-				return \WP_Media_Delivery\Admin\MediaOverview::getInstance();
+				return \Advanced_Media_Offloader\Admin\MediaOverview::getInstance();
 			});
 
 			$this->container->register('bulk_offload_handler', function ($c) {
-				return \WP_Media_Delivery\BulkOffloadHandler::get_instance();
+				return \Advanced_Media_Offloader\BulkOffloadHandler::get_instance();
 			});
 		}
 
@@ -147,7 +146,7 @@ if (!class_exists('WPMD')) {
 			if (!class_exists(WPFitter\Aws\S3\S3Client::class)) {
 				// Show admin notice if AWS SDK is missing.
 				add_action('admin_notices', function () {
-					$this->notice(__('AWS SDK for PHP is required to use WP Media Delivery. Please install it via Composer.', 'wp-media-delivery'), 'error');
+					$this->notice(__('AWS SDK for PHP is required to use Advanced Media Offloader. Please install it via Composer.', 'wp-media-delivery'), 'error');
 				});
 				return;
 			}
@@ -156,7 +155,7 @@ if (!class_exists('WPMD')) {
 			if (is_admin()) {
 				$this->container->get('settings_page'); // Initialize settings
 				$this->container->get('media_overview_page'); // Initialize media overview
-				new \WP_Media_Delivery\Admin\Observers\CurrentScreen();
+				new \Advanced_Media_Offloader\Admin\Observers\CurrentScreen();
 
 				# Add link to the settings page in the plugins list
 				add_filter('plugin_action_links_' . plugin_basename(__FILE__), [$this, 'plugin_action_links']);
@@ -174,12 +173,12 @@ if (!class_exists('WPMD')) {
 		private function include_files()
 		{
 			# include Utility Functions
-			include_once WPMD_PATH . 'utility-functions.php';
+			include_once ADVMO_PATH . 'utility-functions.php';
 		}
 
 		public function plugin_action_links($links)
 		{
-			$settings_page_link = '<a href="' . esc_url(admin_url('admin.php?page=wpmd')) . '">' . __('Settings', 'wp-media-delivery') . '</a>';
+			$settings_page_link = '<a href="' . esc_url(admin_url('admin.php?page=advmo')) . '">' . __('Settings', 'wp-media-delivery') . '</a>';
 			array_unshift($links, $settings_page_link);
 			return $links;
 		}
@@ -197,15 +196,15 @@ if (!class_exists('WPMD')) {
 			load_plugin_textdomain('wp-media-delivery', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 
 			// Get selected cloud provider in plugin settings page.
-			$cloud_provider_key = wpmd_get_cloud_provider_key();
+			$cloud_provider_key = advmo_get_cloud_provider_key();
 
 			if ($cloud_provider_key) {
 				try {
 					// Use the Factory to create the cloud provider instance.
-					$cloud_provider = WP_Media_Delivery\Factories\CloudProviderFactory::create($cloud_provider_key);
+					$cloud_provider = Advanced_Media_Offloader\Factories\CloudProviderFactory::create($cloud_provider_key);
 
 					// Instantiate the Offloader with the cloud provider.
-					$this->offloader = WP_Media_Delivery\Offloader::get_instance($cloud_provider);
+					$this->offloader = Advanced_Media_Offloader\Offloader::get_instance($cloud_provider);
 					$this->offloader->initializeHooks();
 				} catch (Exception $e) {
 					// Handle exception or display admin notice.
@@ -223,9 +222,9 @@ if (!class_exists('WPMD')) {
 		 */
 		public function plugin_activated()
 		{
-			// Set the first activated version of WP Media Delivery.
-			if (null === get_option('wpmd_first_activated_version', null)) {
-				update_option('wpmd_first_activated_version', WPMD_VERSION, true);
+			// Set the first activated version of Advanced Media Offloader.
+			if (null === get_option('advmo_first_activated_version', null)) {
+				update_option('advmo_first_activated_version', ADVMO_VERSION, true);
 			}
 		}
 
@@ -243,18 +242,18 @@ if (!class_exists('WPMD')) {
 		}
 	}
 
-	function wpmd()
+	function advmo()
 	{
-		global $wpmd;
+		global $advmo;
 
 		// Instantiate only once.
-		if (!isset($wpmd)) {
-			$wpmd = new WPMD();
-			$wpmd->initialize();
+		if (!isset($advmo)) {
+			$advmo = new ADVMO();
+			$advmo->initialize();
 		}
-		return $wpmd;
+		return $advmo;
 	}
 
 	// Instantiate.
-	wpmd();
+	advmo();
 } // class_exists check 

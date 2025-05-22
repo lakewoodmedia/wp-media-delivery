@@ -78,9 +78,9 @@ class GeneralSettings
 	{
 		add_settings_section(
 			'cloud_provider',
-			__('Cloud Provider', 'advanced-media-offloader'),
+			__('Cloud Provider', 'wp-media-delivery'),
 			function () {
-				echo '<p>' . esc_attr__('Select a cloud storage provider and provide the necessary credentials.', 'advanced-media-offloader') . '</p></div>';
+				echo '<p>' . esc_attr__('Select a cloud storage provider and provide the necessary credentials.', 'wp-media-delivery') . '</p></div>';
 			},
 			'advmo',
 			[
@@ -91,9 +91,9 @@ class GeneralSettings
 
 		add_settings_section(
 			'general_settings',
-			__('General Settings', 'advanced-media-offloader'),
+			__('General Settings', 'wp-media-delivery'),
 			function () {
-				echo '<p>' . esc_attr__('Configure the core options for managing and offloading your media files to cloud storage.', 'advanced-media-offloader') . '</p></div>';
+				echo '<p>' . esc_attr__('Configure the core options for managing and offloading your media files to cloud storage.', 'wp-media-delivery') . '</p></div>';
 			},
 			'advmo',
 			[
@@ -107,7 +107,7 @@ class GeneralSettings
 	{
 		add_settings_field(
 			'cloud_provider',
-			__('Cloud Provider', 'advanced-media-offloader'),
+			__('Cloud Provider', 'wp-media-delivery'),
 			[$this, 'cloud_provider_field'],
 			'advmo',
 			'cloud_provider',
@@ -134,7 +134,7 @@ class GeneralSettings
 	{
 		add_settings_field(
 			'retention_policy',
-			__('Retention Policy', 'advanced-media-offloader'),
+			__('Retention Policy', 'wp-media-delivery'),
 			[$this, 'retention_policy_field'],
 			'advmo',
 			'general_settings',
@@ -147,7 +147,7 @@ class GeneralSettings
 	{
 		add_settings_field(
 			'mirror_delete',
-			__('Mirror Delete', 'advanced-media-offloader'),
+			__('Mirror Delete', 'wp-media-delivery'),
 			[$this, 'mirror_delete_field'],
 			'advmo',
 			'general_settings',
@@ -161,7 +161,7 @@ class GeneralSettings
 	{
 		add_settings_field(
 			'object_versioning',
-			__('File Versioning', 'advanced-media-offloader'),
+			__('File Versioning', 'wp-media-delivery'),
 			[$this, 'object_versioning_field'],
 			'advmo',
 			'general_settings',
@@ -175,7 +175,7 @@ class GeneralSettings
 	{
 		add_settings_field(
 			'path_prefix',
-			__('Custom Path Prefix', 'advanced-media-offloader'),
+			__('Custom Path Prefix', 'wp-media-delivery'),
 			[$this, 'path_prefix_field'],
 			'advmo',
 			'general_settings',
@@ -192,9 +192,9 @@ class GeneralSettings
 		$path_prefix_Active = isset($options['path_prefix_active']) ? $options['path_prefix_active'] : 0;
 		echo '<div class="advmo-checkbox-option">';
 		echo '<input type="checkbox" id="path_prefix_active" name="advmo_settings[path_prefix_active]" value="1" ' . checked(1, $path_prefix_Active, false) . '/>';
-		echo '<label for="path_prefix_active">' . esc_html__('Use Custom Path Prefix', 'advanced-media-offloader') . '</label>';
+		echo '<label for="path_prefix_active">' . esc_html__('Use Custom Path Prefix', 'wp-media-delivery') . '</label>';
 		echo '<p class="description">' . '<input type="text" id="path_prefix" name="advmo_settings[path_prefix]" value="' . esc_html($path_prefix) . '"' . ($path_prefix_Active ? '' : ' disabled') . '/>'  . '</p>';
-		echo '<p class="description">' . esc_html__('Add a common prefix to organize offloaded media files from this site in your cloud storage bucket.', 'advanced-media-offloader') . '</p>';
+		echo '<p class="description">' . esc_html__('Add a common prefix to organize offloaded media files from this site in your cloud storage bucket.', 'wp-media-delivery') . '</p>';
 		echo '</div>';
 	}
 
@@ -205,8 +205,8 @@ class GeneralSettings
 
 		echo '<div class="advmo-checkbox-option">';
 		echo '<input type="checkbox" id="object_versioning" name="advmo_settings[object_versioning]" value="1" ' . checked(1, $object_versioning, false) . '/>';
-		echo '<label for="object_versioning">' . esc_html__('Add Version to Bucket Path', 'advanced-media-offloader') . '</label>';
-		echo '<p class="description">' . esc_html__('Automatically add unique timestamps to your media file paths to ensure the latest versions are always delivered. This prevents outdated content from being served due to CDN caching, even when you replace files with the same name. Eliminate manual cache invalidation and guarantee your visitors always see the most up-to-date media.', 'advanced-media-offloader') . '</p>';
+		echo '<label for="object_versioning">' . esc_html__('Add Version to Bucket Path', 'wp-media-delivery') . '</label>';
+		echo '<p class="description">' . esc_html__('Automatically add unique timestamps to your media file paths to ensure the latest versions are always delivered. This prevents outdated content from being served due to CDN caching, even when you replace files with the same name. Eliminate manual cache invalidation and guarantee your visitors always see the most up-to-date media.', 'wp-media-delivery') . '</p>';
 		echo '</div>';
 	}
 
@@ -216,8 +216,8 @@ class GeneralSettings
 		$mirror_delete = isset($options['mirror_delete']) ? intval($options['mirror_delete']) : 0;
 		echo '<div class="advmo-checkbox-option">';
 		echo '<input type="checkbox" id="mirror_delete" name="advmo_settings[mirror_delete]" value="1" ' . checked(1, $mirror_delete, false) . '/>';
-		echo '<label for="mirror_delete">' . esc_html__('Sync Deletion with Cloud Storage', 'advanced-media-offloader') . '</label>';
-		echo '<p class="description">' . esc_html__('When enabled, deleting a media file in WordPress will also remove it from your cloud storage.', 'advanced-media-offloader') . '</p>';
+		echo '<label for="mirror_delete">' . esc_html__('Sync Deletion with Cloud Storage', 'wp-media-delivery') . '</label>';
+		echo '<p class="description">' . esc_html__('When enabled, deleting a media file in WordPress will also remove it from your cloud storage.', 'wp-media-delivery') . '</p>';
 		echo '</div>';
 	}
 
@@ -230,20 +230,20 @@ class GeneralSettings
 
 		echo '<div class="advmo-radio-option">';
 		echo '<input type="radio" id="retention_policy" name="advmo_settings[retention_policy]" value="0" ' . checked(0, $retention_policy, false) . '/>';
-		echo '<label for="retention_policy_none">' . esc_html__('Retain Local Files', 'advanced-media-offloader') . '</label>';
-		echo '<p class="description">' . esc_html__('Keep all files on your local server after offloading to the cloud. This option provides redundancy but uses more local storage.', 'advanced-media-offloader') . '</p>';
+		echo '<label for="retention_policy_none">' . esc_html__('Retain Local Files', 'wp-media-delivery') . '</label>';
+		echo '<p class="description">' . esc_html__('Keep all files on your local server after offloading to the cloud. This option provides redundancy but uses more local storage.', 'wp-media-delivery') . '</p>';
 		echo '</div>';
 
 		echo '<div class="advmo-radio-option">';
 		echo '<input type="radio" id="retention_policy_cloud" name="advmo_settings[retention_policy]" value="1" ' . checked(1, $retention_policy, false) . '/>';
-		echo '<label for="retention_policy_cloud">' . esc_html__('Smart Local Cleanup', 'advanced-media-offloader') . '</label>';
-		echo '<p class="description">' . esc_html__('Remove local copies after cloud offloading, but keep the original file as a backup. Balances storage efficiency with data safety.', 'advanced-media-offloader') . '</p>';
+		echo '<label for="retention_policy_cloud">' . esc_html__('Smart Local Cleanup', 'wp-media-delivery') . '</label>';
+		echo '<p class="description">' . esc_html__('Remove local copies after cloud offloading, but keep the original file as a backup. Balances storage efficiency with data safety.', 'wp-media-delivery') . '</p>';
 		echo '</div>';
 
 		echo '<div class="advmo-radio-option">';
 		echo '<input type="radio" id="retention_policy_all" name="advmo_settings[retention_policy]" value="2" ' . checked(2, $retention_policy, false) . '/>';
-		echo '<label for="retention_policy_all">' . esc_html__('Full Cloud Migration', 'advanced-media-offloader') . '</label>';
-		echo '<p class="description">' . esc_html__('Remove all local files, including originals, after successful cloud offloading. Maximizes local storage savings but relies entirely on cloud storage.', 'advanced-media-offloader') . '</p>';
+		echo '<label for="retention_policy_all">' . esc_html__('Full Cloud Migration', 'wp-media-delivery') . '</label>';
+		echo '<p class="description">' . esc_html__('Remove all local files, including originals, after successful cloud offloading. Maximizes local storage savings but relies entirely on cloud storage.', 'wp-media-delivery') . '</p>';
 		echo '</div>';
 
 		echo '</div>';
@@ -287,7 +287,7 @@ class GeneralSettings
 			add_settings_error(
 				'advmo_messages',
 				'advmo_message',
-				__('Settings Saved', 'advanced-media-offloader'),
+				__('Settings Saved', 'wp-media-delivery'),
 				'updated'
 			);
 
@@ -317,7 +317,7 @@ class GeneralSettings
 		$provider = sanitize_text_field(isset($options['cloud_provider']) ? $options['cloud_provider'] : '');
 
 		if (!array_key_exists($provider, $this->cloud_providers)) {
-			throw new \Exception(__('Invalid Cloud Provider!', 'advanced-media-offloader'));
+			throw new \Exception(__('Invalid Cloud Provider!', 'wp-media-delivery'));
 		}
 
 		return $provider;
@@ -366,20 +366,11 @@ class GeneralSettings
 					</svg>';
 		$icon_base64 = 'data:image/svg+xml;base64,' . base64_encode($svg_icon);
 
-		add_menu_page(
-			__('Advanced Media Offloader', 'advanced-media-offloader'),
-			__('Media Offloader', 'advanced-media-offloader'),
-			'manage_options',
-			'advmo',
-			[$this, 'general_settings_page_view'],
-			$icon_base64,
-			100
-		);
-
+		// Add the menu under Tools instead of as a top-level menu
 		add_submenu_page(
-			'advmo',
-			__('General Settings', 'advanced-media-offloader'),
-			__('General Settings', 'advanced-media-offloader'),
+			'tools.php',
+			__('WP Media Delivery', 'wp-media-delivery'),
+			__('Media Delivery', 'wp-media-delivery'),
 			'manage_options',
 			'advmo',
 			[$this, 'general_settings_page_view']
@@ -397,7 +388,7 @@ class GeneralSettings
 
 		// Add placeholder option if no provider is selected
 		if (empty($current_provider)) {
-			echo '<option value="" selected disabled>' . esc_html__('Select a cloud provider', 'advanced-media-offloader') . '</option>';
+			echo '<option value="" selected disabled>' . esc_html__('Select a cloud provider', 'wp-media-delivery') . '</option>';
 		}
 
 		foreach ($this->cloud_providers as $key => $provider) {
@@ -433,16 +424,16 @@ class GeneralSettings
 				$cloud_provider_instance->credentialsField();
 			} catch (\Exception $e) {
 				// Display an error message if the cloud provider is unsupported or instantiation fails
-				echo '<p class="description">' . esc_html__('Selected cloud provider is not supported or failed to initialize.', 'advanced-media-offloader') . '</p>';
+				echo '<p class="description">' . esc_html__('Selected cloud provider is not supported or failed to initialize.', 'wp-media-delivery') . '</p>';
 			}
 		} else {
-			echo '<p class="description">' . esc_html__('Please select a valid cloud provider to configure credentials.', 'advanced-media-offloader') . '</p>';
+			echo '<p class="description">' . esc_html__('Please select a valid cloud provider to configure credentials.', 'wp-media-delivery') . '</p>';
 		}
 	}
 
 	public function general_settings_page_view()
 	{
-		advmo_get_view('admin/general_settings');
+		advmo_get_view('admin/main');
 	}
 
 	public function enqueue_scripts()
@@ -457,10 +448,10 @@ class GeneralSettings
 				'ajax_url' => admin_url('admin-ajax.php'),
 				'nonce' => wp_create_nonce('advmo_test_connection'),
 				'i18n' => [
-					'test_connection' => __('Test Connection', 'advanced-media-offloader'),
-					'recheck' => __('Re-Check', 'advanced-media-offloader'),
-					'connected' => __('Connected.', 'advanced-media-offloader'),
-					'last_check' => __('Last check:', 'advanced-media-offloader')
+					'test_connection' => __('Test Connection', 'wp-media-delivery'),
+					'recheck' => __('Re-Check', 'wp-media-delivery'),
+					'connected' => __('Connected.', 'wp-media-delivery'),
+					'last_check' => __('Last check:', 'wp-media-delivery')
 				]
 			]);
 		}
@@ -491,7 +482,7 @@ class GeneralSettings
 
 		// Verify nonce
 		if (!$this->verify_security_nonce('security_nonce', 'advmo_test_connection')) {
-			$response_data['message'] = __('Invalid nonce!', 'advanced-media-offloader');
+			$response_data['message'] = __('Invalid nonce!', 'wp-media-delivery');
 			wp_send_json_error($response_data);
 		}
 
@@ -499,14 +490,14 @@ class GeneralSettings
 		$cloud_provider_key = $this->get_cloud_provider_key();
 
 		if (empty($cloud_provider_key)) {
-			$response_data['message'] = __('Invalid Cloud Provider!', 'advanced-media-offloader');
+			$response_data['message'] = __('Invalid Cloud Provider!', 'wp-media-delivery');
 			wp_send_json_error($response_data);
 		}
 
 		try {
 			$cloud_provider = $this->createCloudProvider($cloud_provider_key);
 			if (!$cloud_provider) {
-				throw new \Exception(__('Could not initialize cloud provider', 'advanced-media-offloader'));
+				throw new \Exception(__('Could not initialize cloud provider', 'wp-media-delivery'));
 			}
 
 			$connection_result = $cloud_provider->checkConnection();
@@ -515,10 +506,10 @@ class GeneralSettings
 			update_option('advmo_last_connection_check', $current_time);
 
 			if ($connection_result) {
-				$response_data['message'] = __('Connection successful!', 'advanced-media-offloader');
+				$response_data['message'] = __('Connection successful!', 'wp-media-delivery');
 				wp_send_json_success($response_data);
 			} else {
-				$response_data['message'] = __('Connection failed!', 'advanced-media-offloader');
+				$response_data['message'] = __('Connection failed!', 'wp-media-delivery');
 				wp_send_json_error($response_data, 401);
 			}
 		} catch (\Exception $e) {
@@ -528,7 +519,7 @@ class GeneralSettings
 
 			$response_data['message'] = sprintf(
 				/* translators: %s: error message */
-				__('Failed to establish a connection: %s', 'advanced-media-offloader'),
+				__('Failed to establish a connection: %s', 'wp-media-delivery'),
 				esc_html($e->getMessage())
 			);
 			wp_send_json_error($response_data, 500);

@@ -2,7 +2,7 @@
 	"type": "wordpress-plugin",
 	"autoload": {
 		"psr-4": {
-			"WP_Media_Delivery\\": "includes/"
+			"Advanced_Media_Offloader\\": "includes/"
 		}
 	},
 	"require": {
@@ -16,7 +16,7 @@
 	"scripts": {
 		"package": [
 			"composer scope-release",
-			"cd .. && zip -r wp-media-delivery.zip wp-media-delivery -x 'wp-media-delivery/.git/*' -x 'wp-media-delivery/.gitignore' -x 'wp-media-delivery/.github/*' -x 'wp-media-delivery/composer.lock' -x 'wp-media-delivery/*.md' -x 'wp-media-delivery/.phpcs.xml' -x 'wp-media-delivery/.editorconfig' -x 'wp-media-delivery/scoper.inc.php'"
+			"cd .. && zip -r advanced-media-offloader.zip advanced-media-offloader -x 'advanced-media-offloader/.git/*' -x 'advanced-media-offloader/.gitignore' -x 'advanced-media-offloader/.github/*' -x 'advanced-media-offloader/composer.lock' -x 'advanced-media-offloader/*.md' -x 'advanced-media-offloader/.phpcs.xml' -x 'advanced-media-offloader/.editorconfig' -x 'advanced-media-offloader/scoper.inc.php'"
 		],
 		"pre-autoload-dump": "Aws\\Script\\Composer\\Composer::removeUnusedServices",
 		"scope-release": [

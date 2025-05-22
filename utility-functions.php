@@ -9,11 +9,11 @@ if (!defined('ABSPATH')) {
  * @param string $file The file path relative to the plugin directory.
  * @return void
  */
-if (!function_exists('wpmd_get_view')) {
-	function wpmd_get_view(string $template)
+if (!function_exists('advmo_get_view')) {
+	function advmo_get_view(string $template)
 	{
-		if (file_exists(WPMD_PATH . 'templates/' . $template . '.php')) {
-			include WPMD_PATH . 'templates/' . $template . '.php';
+		if (file_exists(ADVMO_PATH . 'templates/' . $template . '.php')) {
+			include ADVMO_PATH . 'templates/' . $template . '.php';
 		}
 	}
 }
@@ -25,8 +25,8 @@ if (!function_exists('wpmd_get_view')) {
  * @param bool $die Whether to die after dumping.
  * @return void
  */
-if (!function_exists('wpmd_vd')) {
-	function wpmd_vd($var, bool $die = false): void
+if (!function_exists('advmo_vd')) {
+	function advmo_vd($var, bool $die = false): void
 	{
 		echo '<pre style="direction: ltr">';
 		var_dump($var);
@@ -38,8 +38,8 @@ if (!function_exists('wpmd_vd')) {
 }
 
 
-if (!function_exists('wpmd_is_settings_page')) {
-	function wpmd_is_settings_page($page_name = ''): bool
+if (!function_exists('advmo_is_settings_page')) {
+	function advmo_is_settings_page($page_name = ''): bool
 	{
 		$current_screen = get_current_screen();
 
@@ -49,11 +49,12 @@ if (!function_exists('wpmd_is_settings_page')) {
 
 		// Get the current page from the query string
 		$current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+		$current_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general';
 
-		// Define our plugin pages
+		// Define our plugin pages and tabs
 		$plugin_pages = [
-			'general' => 'wpmd',
-			'media-overview' => 'wpmd_media_overview'
+			'general' => 'advmo',
+			'media-overview' => 'advmo'
 		];
 
 		// If a specific page is requested
@@ -62,12 +63,19 @@ if (!function_exists('wpmd_is_settings_page')) {
 				return false; // Invalid page name provided
 			}
 
-			// Check if the current page matches the requested page
-			return $current_page === $plugin_pages[$page_name];
+			// For media-overview, check if we're on the right tab
+			if ($page_name === 'media-overview') {
+				return $current_page === 'advmo' && $current_tab === 'media-overview';
+			}
+
+			// For general settings, check if we're on the main tab or no tab specified
+			if ($page_name === 'general') {
+				return $current_page === 'advmo' && ($current_tab === 'general' || empty($current_tab));
+			}
 		}
 
 		// Check if we're on any plugin page
-		return in_array($current_page, array_values($plugin_pages));
+		return $current_page === 'advmo';
 	}
 }
 
@@ -82,16 +90,11 @@ if (!function_exists('wpmd_is_settings_page')) {
  *
  * @return string
  */
-if (!function_exists('wpmd_get_copyright_text')) {
-	function wpmd_get_copyright_text(): string
+if (!function_exists('advmo_get_copyright_text')) {
+	function advmo_get_copyright_text(): string
 	{
-		$year = date('Y');
-		$site_url = 'https://wpfitter.com/?utm_source=wp-plugin&utm_medium=plugin&utm_campaign=wp-media-delivery';
-
-		return sprintf(
-			'WP Media Delivery plugin developed by <a href="%s" target="_blank">WPFitter</a>. ',
-			esc_url($site_url)
-		);
+		// Return empty string - no copyright text
+		return '';
 	}
 }
 
@@ -100,8 +103,8 @@ if (!function_exists('wpmd_get_copyright_text')) {
  *
  * @return array The bulk offload data.
  */
-if (!function_exists('wpmd_get_bulk_offload_data')) {
-	function wpmd_get_bulk_offload_data(): array
+if (!function_exists('advmo_get_bulk_offload_data')) {
+	function advmo_get_bulk_offload_data(): array
 	{
 		$defaults = array(
 			'total' => 0,
@@ -112,7 +115,7 @@ if (!function_exists('wpmd_get_bulk_offload_data')) {
 			'oversized_skipped' => 0
 		);
 
-		$stored_data = get_option('wpmd_bulk_offload_data', array());
+		$stored_data = get_option('advmo_bulk_offload_data', array());
 
 		return array_merge($defaults, $stored_data);
 	}
@@ -124,8 +127,8 @@ if (!function_exists('wpmd_get_bulk_offload_data')) {
  * @param array $new_data The new data to update.
  * @return array The updated bulk offload data.
  */
-if (!function_exists('wpmd_update_bulk_offload_data')) {
-	function wpmd_update_bulk_offload_data(array $new_data): array
+if (!function_exists('advmo_update_bulk_offload_data')) {
+	function advmo_update_bulk_offload_data(array $new_data): array
 	{
 		// Define the allowed keys
 		$allowed_keys = array('total', 'status', 'processed', 'errors', 'oversized_skipped');
@@ -134,7 +137,7 @@ if (!function_exists('wpmd_update_bulk_offload_data')) {
 		$filtered_new_data = array_intersect_key($new_data, array_flip($allowed_keys));
 
 		// Get the existing data
-		$existing_data = wpmd_get_bulk_offload_data();
+		$existing_data = advmo_get_bulk_offload_data();
 
 		// Merge the filtered new data with the existing data
 		$updated_data = array_merge($existing_data, $filtered_new_data);
@@ -146,7 +149,7 @@ if (!function_exists('wpmd_update_bulk_offload_data')) {
 		$final_data['last_update'] = time();
 
 		// Update the option in the database
-		update_option('wpmd_bulk_offload_data', $final_data);
+		update_option('advmo_bulk_offload_data', $final_data);
 
 		return $final_data;
 	}
@@ -157,8 +160,8 @@ if (!function_exists('wpmd_update_bulk_offload_data')) {
  *
  * @return bool True if media is organized by year and month, false otherwise.
  */
-if (!function_exists('wpmd_is_media_organized_by_year_month')) {
-	function wpmd_is_media_organized_by_year_month(): bool
+if (!function_exists('advmo_is_media_organized_by_year_month')) {
+	function advmo_is_media_organized_by_year_month(): bool
 	{
 		return get_option('uploads_use_yearmonth_folders') ? true : false;
 	}
@@ -170,8 +173,8 @@ if (!function_exists('wpmd_is_media_organized_by_year_month')) {
  * @param string $path The path to sanitize.
  * @return string The sanitized path.
  */
-if (!function_exists('wpmd_sanitize_path')) {
-	function wpmd_sanitize_path(string $path): string
+if (!function_exists('advmo_sanitize_path')) {
+	function advmo_sanitize_path(string $path): string
 	{
 		// Remove leading and trailing whitespace
 		$path = trim($path);
@@ -203,10 +206,10 @@ if (!function_exists('wpmd_sanitize_path')) {
  *
  * @return void
  */
-if (!function_exists('wpmd_clear_bulk_offload_data')) {
-	function wpmd_clear_bulk_offload_data(): void
+if (!function_exists('advmo_clear_bulk_offload_data')) {
+	function advmo_clear_bulk_offload_data(): void
 	{
-		delete_option('wpmd_bulk_offload_data');
+		delete_option('advmo_bulk_offload_data');
 	}
 }
 
@@ -215,10 +218,10 @@ if (!function_exists('wpmd_clear_bulk_offload_data')) {
  *
  * @return string The cloud provider key.
  */
-if (!function_exists('wpmd_get_cloud_provider_key')) {
-	function wpmd_get_cloud_provider_key(): string
+if (!function_exists('advmo_get_cloud_provider_key')) {
+	function advmo_get_cloud_provider_key(): string
 	{
-		$options = get_option('wpmd_settings', []);
+		$options = get_option('advmo_settings', []);
 		return $options['cloud_provider'] ?? '';
 	}
 }
@@ -228,8 +231,8 @@ if (!function_exists('wpmd_get_cloud_provider_key')) {
  *
  * @return int The count of unoffloaded media items.
  */
-if (!function_exists('wpmd_get_unoffloaded_media_items_count')) {
-	function wpmd_get_unoffloaded_media_items_count(): int
+if (!function_exists('advmo_get_unoffloaded_media_items_count')) {
+	function advmo_get_unoffloaded_media_items_count(): int
 	{
 		$args = [
 			'fields' => 'ids',
@@ -239,11 +242,11 @@ if (!function_exists('wpmd_get_unoffloaded_media_items_count')) {
 			'meta_query' => [
 				'relation' => 'OR',
 				[
-					'key' => 'wpmd_offloaded',
+					'key' => 'advmo_offloaded',
 					'compare' => 'NOT EXISTS'
 				],
 				[
-					'key' => 'wpmd_offloaded',
+					'key' => 'advmo_offloaded',
 					'compare' => '=',
 					'value' => ''
 				]
@@ -254,8 +257,8 @@ if (!function_exists('wpmd_get_unoffloaded_media_items_count')) {
 	}
 }
 
-if (!function_exists('wpmd_get_offloaded_media_items_count')) {
-	function wpmd_get_offloaded_media_items_count()
+if (!function_exists('advmo_get_offloaded_media_items_count')) {
+	function advmo_get_offloaded_media_items_count()
 	{
 		$args = [
 			'fields' => 'ids',
@@ -264,7 +267,7 @@ if (!function_exists('wpmd_get_offloaded_media_items_count')) {
 			'post_status' => 'any',
 			'meta_query' => [
 				[
-					'key' => 'wpmd_offloaded',
+					'key' => 'advmo_offloaded',
 					'compare' => '!=',
 					'value' => ''
 				]
