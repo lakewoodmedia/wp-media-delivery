@@ -18,6 +18,9 @@ WP Media Delivery helps you optimize your WordPress site by offloading media fil
 - **Seamless Cloud Integration**: Automatically uploads media files to your preferred cloud provider and serves them from their global network
 - **Multiple Provider Support**: Works with Amazon S3, Cloudflare R2, DigitalOcean Spaces, Min.io, and Wasabi
 - **WebP Conversion**: Creates and serves WebP versions of uploaded images for modern browsers, improving load times
+- **Media Library Management**: Directly offload individual files or use bulk actions in the media library
+- **Fetch Back Functionality**: Retrieve media from cloud storage back to your local server when needed
+- **Storage Status Indicators**: See at a glance where your media is stored with visual indicators in the media library
 - **Page Builder Compatible**: Works with popular page builders like Elementor and Bricks through standard WordPress hooks
 - **Local Cleanup**: Optionally removes media files from your local server after successful offloading
 - **Original Image Removal**: Option to remove original images when using WebP to further reduce storage requirements
@@ -72,6 +75,16 @@ define('WPMD_CUSTOM_DOMAIN', 'https://cdn.yourdomain.com');  // Custom domain fo
 4. Configure additional settings as needed
 5. Start offloading your media to the cloud!
 
+### Media Library Actions
+
+The plugin adds several useful actions to the WordPress media library:
+
+- **Storage Status Column**: Shows whether each file is stored locally or in cloud storage
+- **Offload to Cloud**: Available as an action link for individual media items and as a bulk action
+- **Fetch Back**: Retrieve files from cloud storage back to your server when needed
+
+These options give you full control over where your media is stored, allowing you to manage storage space efficiently.
+
 ## Plugin Structure
 
 The plugin follows a modular architecture for maintainability and extensibility:
@@ -116,7 +129,9 @@ wp-media-delivery/
 We maintain a detailed changelog to track all changes to the plugin. See the [CHANGELOG.md](CHANGELOG.md) file for a complete history of changes.
 
 Recent changes include:
-- Version 1.0.1-beta: Added a media library status column to show storage location
+- Version 1.0.13-beta: Added fetch back functionality to retrieve media from cloud storage
+- Version 1.0.12-beta: Added media library offload actions for individual and bulk operations
+- Version 1.0.1-beta: Added media library status column to show storage location
 - Version 1.0.0-rc: Initial release candidate
 
 ## Credits

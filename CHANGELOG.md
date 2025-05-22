@@ -5,6 +5,22 @@ All notable changes to the "WP Media Delivery" plugin will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.13-beta] - 2023-09-18
+
+### Added
+- "Fetch Back" functionality to retrieve media from cloud storage to local server
+- Automatic cleanup of cloud files after successful fetch operations
+- Improved documentation in README.md with details on new media management features
+
+## [1.0.12-beta] - 2023-09-15
+
+### Added
+- New offload actions in the media library:
+  - Individual action link on each media item to offload to cloud storage
+  - Bulk action option to offload multiple selected media files at once
+- "Fetch Back" option to retrieve media from cloud storage and remove it from the cloud
+- Success/error notifications for offload and fetch operations
+
 ## [1.0.1-beta] - 2023-09-07
 
 ### Added

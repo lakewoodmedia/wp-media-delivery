@@ -126,6 +126,26 @@ class MediaLibraryColumns implements ObserverInterface
             );
         }
         
+        // Add fetch back option for already offloaded media
+        if ($is_offloaded) {
+            $fetch_url = wp_nonce_url(
+                add_query_arg(
+                    [
+                        'action' => 'advmo_fetch_media',
+                        'attachment_id' => $post->ID,
+                    ],
+                    admin_url('admin.php')
+                ),
+                'advmo_fetch_media_' . $post->ID
+            );
+            
+            $actions['fetch_back'] = sprintf(
+                '<a href="%s" class="advmo-fetch-link">%s</a>',
+                esc_url($fetch_url),
+                esc_html__('Fetch Back', 'wp-media-delivery')
+            );
+        }
+        
         return $actions;
     }
     
@@ -249,6 +269,28 @@ class MediaLibraryColumns implements ObserverInterface
             echo '<div class="notice notice-error is-dismissible"><p>' . 
                 esc_html__('Failed to offload media file. Check error logs for details.', 'wp-media-delivery') . 
                 '</p></div>';
+        }
+        
+        // For fetch back results
+        if (isset($_GET['advmo_fetch_success'])) {
+            echo '<div class="notice notice-success is-dismissible"><p>' . 
+                esc_html__('Media file successfully fetched back from cloud storage.', 'wp-media-delivery') . 
+                '</p></div>';
+        }
+        
+        if (isset($_GET['advmo_fetch_error'])) {
+            $error_type = isset($_GET['advmo_fetch_error']) ? $_GET['advmo_fetch_error'] : 'general';
+            
+            switch ($error_type) {
+                case 'not_offloaded':
+                    $error_message = __('The selected media file is not currently in cloud storage.', 'wp-media-delivery');
+                    break;
+                default:
+                    $error_message = __('Failed to fetch media file. Check error logs for details.', 'wp-media-delivery');
+                    break;
+            }
+            
+            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html($error_message) . '</p></div>';
         }
     }
 

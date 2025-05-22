@@ -2,7 +2,7 @@
 /*
  * Plugin Name:       WP Media Delivery
  * Description:       Offload WordPress media to Amazon S3, Cloudflare R2, DigitalOcean Spaces, Min.io or Wasabi.
- * Version:           1.0.1-beta
+ * Version:           1.0.13-beta
  * Requires at least: 5.6
  * Requires PHP:      8.1
  * Author:            Fuunction
@@ -163,6 +163,12 @@ if (!class_exists('ADVMO')) {
 
 				# Add link to the settings page in the plugins list
 				add_filter('plugin_action_links_' . plugin_basename(__FILE__), [$this, 'plugin_action_links']);
+				
+				# Handle individual media offload action
+				add_action('admin_init', [$this, 'handle_media_offload_action']);
+				
+				# Handle fetch back action
+				add_action('admin_init', [$this, 'handle_media_fetch_action']);
 			}
 
 			# Initialize offloader if cloud provider is configured
@@ -243,6 +249,170 @@ if (!class_exists('ADVMO')) {
 		{
 			$class = 'notice notice-' . $type;
 			printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), esc_attr($message));
+		}
+
+		/**
+		 * Handle the single media offload action.
+		 *
+		 * @return void
+		 */
+		public function handle_media_offload_action()
+		{
+			if (!isset($_GET['action']) || $_GET['action'] !== 'advmo_offload_media' || !isset($_GET['attachment_id'])) {
+				return;
+			}
+			
+			$attachment_id = intval($_GET['attachment_id']);
+			
+			// Verify nonce
+			if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'advmo_offload_media_' . $attachment_id)) {
+				wp_die(__('Security check failed.', 'wp-media-delivery'));
+			}
+			
+			// Check permissions
+			if (!current_user_can('upload_files')) {
+				wp_die(__('You do not have permission to offload media files.', 'wp-media-delivery'));
+			}
+			
+			// Check if already offloaded
+			if (get_post_meta($attachment_id, 'advmo_offloaded', true)) {
+				wp_redirect(add_query_arg('advmo_offload_success', '1', admin_url('upload.php')));
+				exit;
+			}
+			
+			$success = false;
+			
+			// Get cloud provider and attempt to offload
+			if ($this->container->has('offloader') && $this->container->get('offloader') !== null) {
+				$offloader = $this->container->get('offloader');
+				$uploader = new \Advanced_Media_Offloader\Services\CloudAttachmentUploader($offloader->cloudProvider);
+				
+				$success = $uploader->uploadAttachment($attachment_id);
+			}
+			
+			if ($success) {
+				wp_redirect(add_query_arg('advmo_offload_success', '1', admin_url('upload.php')));
+				exit;
+			} else {
+				wp_redirect(add_query_arg('advmo_offload_error', '1', admin_url('upload.php')));
+				exit;
+			}
+		}
+
+		/**
+		 * Handle the fetch back action.
+		 *
+		 * @return void
+		 */
+		public function handle_media_fetch_action()
+		{
+			if (!isset($_GET['action']) || $_GET['action'] !== 'advmo_fetch_media' || !isset($_GET['attachment_id'])) {
+				return;
+			}
+			
+			$attachment_id = intval($_GET['attachment_id']);
+			
+			// Verify nonce
+			if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'advmo_fetch_media_' . $attachment_id)) {
+				wp_die(__('Security check failed.', 'wp-media-delivery'));
+			}
+			
+			// Check permissions
+			if (!current_user_can('upload_files')) {
+				wp_die(__('You do not have permission to manage media files.', 'wp-media-delivery'));
+			}
+			
+			// Check if media is offloaded
+			if (!get_post_meta($attachment_id, 'advmo_offloaded', true)) {
+				wp_redirect(add_query_arg('advmo_fetch_error', 'not_offloaded', admin_url('upload.php')));
+				exit;
+			}
+			
+			$success = false;
+			
+			// Get cloud provider
+			if ($this->container->has('offloader') && $this->container->get('offloader') !== null) {
+				$offloader = $this->container->get('offloader');
+				$cloud_provider = $offloader->cloudProvider;
+				
+				// Get file path information
+				$attached_file = get_attached_file($attachment_id);
+				$file_dir = dirname($attached_file);
+				$file_name = basename($attached_file);
+				
+				// Create the directory if it doesn't exist
+				if (!file_exists($file_dir)) {
+					wp_mkdir_p($file_dir);
+				}
+				
+				// Get metadata for thumbnails
+				$metadata = wp_get_attachment_metadata($attachment_id);
+				
+				// Get the URL to the file in cloud storage
+				$cloud_url = wp_get_attachment_url($attachment_id);
+				
+				// Download the original file
+				$this->fetch_remote_file_to_local($cloud_url, $attached_file);
+				
+				// Download thumbnails if they exist
+				if (!empty($metadata['sizes']) && is_array($metadata['sizes'])) {
+					foreach ($metadata['sizes'] as $size => $size_data) {
+						$thumb_path = $file_dir . '/' . $size_data['file'];
+						$thumb_url = dirname($cloud_url) . '/' . $size_data['file'];
+						$this->fetch_remote_file_to_local($thumb_url, $thumb_path);
+					}
+				}
+				
+				// Delete from cloud storage
+				$cloud_provider->deleteAttachment($attachment_id);
+				
+				// Update metadata to indicate it's no longer in cloud storage
+				delete_post_meta($attachment_id, 'advmo_offloaded');
+				delete_post_meta($attachment_id, 'advmo_provider');
+				delete_post_meta($attachment_id, 'advmo_provider_type');
+				delete_post_meta($attachment_id, 'advmo_bucket');
+				delete_post_meta($attachment_id, 'advmo_path');
+				delete_post_meta($attachment_id, 'advmo_offloaded_at');
+				
+				$success = true;
+			}
+			
+			if ($success) {
+				wp_redirect(add_query_arg('advmo_fetch_success', '1', admin_url('upload.php')));
+				exit;
+			} else {
+				wp_redirect(add_query_arg('advmo_fetch_error', 'general', admin_url('upload.php')));
+				exit;
+			}
+		}
+		
+		/**
+		 * Download a remote file to the local filesystem.
+		 *
+		 * @param string $url  The URL of the remote file.
+		 * @param string $path The local path to save the file to.
+		 * @return bool Whether the download was successful.
+		 */
+		private function fetch_remote_file_to_local($url, $path)
+		{
+			$response = wp_remote_get($url, [
+				'timeout'     => 60,
+				'sslverify'   => false,
+				'stream'      => true,
+				'filename'    => $path,
+			]);
+			
+			if (is_wp_error($response)) {
+				error_log('WP Media Delivery: Error downloading file: ' . $response->get_error_message());
+				return false;
+			}
+			
+			if (wp_remote_retrieve_response_code($response) !== 200) {
+				error_log('WP Media Delivery: Error downloading file: ' . wp_remote_retrieve_response_message($response));
+				return false;
+			}
+			
+			return true;
 		}
 	}
 
