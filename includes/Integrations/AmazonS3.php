@@ -19,6 +19,11 @@ class AmazonS3 extends S3_Provider
         return $this->providerName;
     }
 
+    public function getProviderType()
+    {
+        return 's3';
+    }
+
     public function getClient()
     {
         return new S3Client([

@@ -19,6 +19,11 @@ class Cloudflare_R2 extends S3_Provider
 		return $this->providerName;
 	}
 
+	public function getProviderType()
+	{
+		return 'r2';
+	}
+
 	public function getClient()
 	{
 		return new S3Client([

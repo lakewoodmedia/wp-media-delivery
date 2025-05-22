@@ -19,6 +19,11 @@ class Wasabi extends S3_Provider
         return $this->providerName;
     }
 
+    public function getProviderType()
+    {
+        return 'wasabi';
+    }
+
     public function getClient()
     {
         return new S3Client([

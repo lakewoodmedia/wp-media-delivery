@@ -2,7 +2,7 @@
 /*
  * Plugin Name:       WP Media Delivery
  * Description:       Offload WordPress media to Amazon S3, Cloudflare R2, DigitalOcean Spaces, Min.io or Wasabi.
- * Version:           1.0.0-rc
+ * Version:           1.0.1-beta
  * Requires at least: 5.6
  * Requires PHP:      8.1
  * Author:            Fuunction
@@ -155,6 +155,10 @@ if (!class_exists('ADVMO')) {
 			if (is_admin()) {
 				$this->container->get('settings_page'); // Initialize settings
 				$this->container->get('media_overview_page'); // Initialize media overview
+				
+				// Ensure the MediaLibraryColumns file is included
+				require_once ADVMO_PATH . 'includes/Admin/Observers/MediaLibraryColumns.php';
+				
 				new \Advanced_Media_Offloader\Admin\Observers\CurrentScreen();
 
 				# Add link to the settings page in the plugins list

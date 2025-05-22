@@ -19,6 +19,11 @@ class DigitalOceanSpaces extends S3_Provider
 		return $this->providerName;
 	}
 
+	public function getProviderType()
+	{
+		return 'do_spaces';
+	}
+
 	public function getClient()
 	{
 		return new S3Client([

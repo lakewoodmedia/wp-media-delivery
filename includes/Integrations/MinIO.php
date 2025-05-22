@@ -19,6 +19,11 @@ class MinIO extends S3_Provider
         return $this->providerName;
     }
 
+    public function getProviderType()
+    {
+        return 'minio';
+    }
+
     public function getClient()
     {
         return new S3Client([

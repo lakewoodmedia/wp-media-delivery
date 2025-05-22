@@ -145,6 +145,7 @@ class CloudAttachmentUploader
         update_post_meta($attachment_id, 'advmo_offloaded', true);
         update_post_meta($attachment_id, 'advmo_offloaded_at', time());
         update_post_meta($attachment_id, 'advmo_provider', $this->cloudProvider->getProviderName());
+        update_post_meta($attachment_id, 'advmo_provider_type', $this->cloudProvider->getProviderType());
         update_post_meta($attachment_id, 'advmo_bucket', $this->cloudProvider->getBucket());
     }
 

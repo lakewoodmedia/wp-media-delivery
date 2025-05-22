@@ -42,6 +42,13 @@ abstract class S3_Provider
 
 	abstract function getProviderName();
 
+	/**
+	 * Get the provider type identifier.
+	 * 
+	 * @return string The provider type identifier (s3, r2, wasabi, etc.)
+	 */
+	abstract function getProviderType();
+
 	abstract function getDomain();
 
 	/**

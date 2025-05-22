@@ -72,6 +72,53 @@ define('WPMD_CUSTOM_DOMAIN', 'https://cdn.yourdomain.com');  // Custom domain fo
 4. Configure additional settings as needed
 5. Start offloading your media to the cloud!
 
+## Plugin Structure
+
+The plugin follows a modular architecture for maintainability and extensibility:
+
+```
+wp-media-delivery/
+├── assets/                  # Frontend assets (CSS, JS, images)
+├── includes/                # Core plugin files
+│   ├── Abstracts/           # Abstract classes
+│   ├── Admin/               # Admin-related functionality
+│   │   └── Observers/       # Admin-specific observers
+│   ├── Core/                # Core plugin functionality
+│   ├── Factories/           # Factory classes for provider creation
+│   ├── Integrations/        # Cloud provider integrations
+│   ├── Interfaces/          # Interface definitions
+│   ├── Observers/           # Observer pattern implementations
+│   ├── Services/            # Service classes
+│   └── Traits/              # Shared traits
+├── templates/               # Templates for admin UI
+├── vendor/                  # Composer dependencies
+├── CHANGELOG.md             # Detailed change history
+├── README.md                # Plugin documentation
+├── build.sh                 # Build script for releases
+├── composer.json            # Composer dependencies
+├── utility-functions.php    # Utility functions
+└── wp-media-delivery.php    # Main plugin file
+```
+
+**Key Files:**
+- `wp-media-delivery.php`: Main plugin entry point
+- `includes/Offloader.php`: Core offloading functionality
+- `includes/Abstracts/S3_Provider.php`: Abstract provider class for S3-compatible storage
+- `includes/Admin/GeneralSettings.php`: Settings page functionality
+- `includes/Admin/MediaOverview.php`: Media overview page
+- `includes/Observers/`: Observer pattern implementation for WordPress hooks
+- `includes/Services/CloudAttachmentUploader.php`: Service for uploading attachments
+
+> **Note**: When making changes to the plugin structure, please ensure this section is updated accordingly.
+
+## Changelog
+
+We maintain a detailed changelog to track all changes to the plugin. See the [CHANGELOG.md](CHANGELOG.md) file for a complete history of changes.
+
+Recent changes include:
+- Version 1.0.1-beta: Added a media library status column to show storage location
+- Version 1.0.0-rc: Initial release candidate
+
 ## Credits
 
 This plugin is a fork of [Advanced Media Offloader](https://wordpress.org/support/plugin/advanced-media-offloader/) by WP Fitter. We extend our thanks to the original developers for their work.
