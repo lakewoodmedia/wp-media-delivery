@@ -1,0 +1,47 @@
+{
+	"type": "wordpress-plugin",
+	"autoload": {
+		"psr-4": {
+			"WP_Media_Delivery\\": "includes/"
+		}
+	},
+	"require": {
+		"aws/aws-sdk-php": "^3.331.0"
+	},
+	"extra": {
+		"aws/aws-sdk-php": [
+			"CloudFront"
+		]
+	},
+	"scripts": {
+		"package": [
+			"composer scope-release",
+			"cd .. && zip -r wp-media-delivery.zip wp-media-delivery -x 'wp-media-delivery/.git/*' -x 'wp-media-delivery/.gitignore' -x 'wp-media-delivery/.github/*' -x 'wp-media-delivery/composer.lock' -x 'wp-media-delivery/*.md' -x 'wp-media-delivery/.phpcs.xml' -x 'wp-media-delivery/.editorconfig' -x 'wp-media-delivery/scoper.inc.php'"
+		],
+		"pre-autoload-dump": "Aws\\Script\\Composer\\Composer::removeUnusedServices",
+		"scope-release": [
+			"rm -rf vendor",
+			"composer install --no-dev --optimize-autoloader --prefer-dist",
+			"~/.composer/vendor/bin/php-scoper add-prefix",
+			"rm -rf vendor",
+			"mv build/vendor vendor",
+			"rm -rf build",
+			"composer dump-autoload --classmap-authoritative"
+		],
+		"scope-dev": [
+			"rm -rf vendor",
+			"composer install",
+			"~/.composer/vendor/bin/php-scoper add-prefix",
+			"rm -rf vendor",
+			"mv build/vendor vendor",
+			"rm -rf build",
+			"composer dump-autoload --classmap-authoritative"
+		]
+	},
+	"require-dev": {},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	}
+}
