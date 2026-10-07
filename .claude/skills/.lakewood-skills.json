@@ -1,0 +1,9 @@
+{
+  "repository": "lakewoodmedia/skills",
+  "skills": {
+    "repo-tidy": {
+      "hash": "64944dbbcac43cac6890682f3126d89f7aa4e7efa9bfa62db229171b1928fb0b",
+      "plugin": "lakewood-core"
+    }
+  }
+}
