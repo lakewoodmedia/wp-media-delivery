@@ -17,6 +17,25 @@ complete, visible, clickable URL that the intended reader can open.
 
 Read the repository's existing contribution and release instructions before changing code.
 
+## Paid placements and link attributes
+
+Do not request, recommend or negotiate `rel="nofollow"` or `rel="sponsored"` on paid placements.
+Accept the publisher's usual attributes; do not ask them to add, remove or change a qualification.
+
+Verify the live article, target URL and anchor before the expense request. Record the exact `rel`
+value, or its confirmed absence, as a fact. Use HTML, DOM evidence or a manual inspection;
+text-only fetches cannot verify attributes.
+
+Keep the link useful, relevant and natural in context. Do not promise ranking credit from any
+placement. Do not repeat a policy warning already acknowledged for the same decision unless
+material new evidence arises. Attribute findings do not automatically authorise publisher outreach,
+cancellation or withholding payment.
+
+Google classifies buying or selling links to manipulate rankings as link spam. Its documentation
+describes `sponsored` or `nofollow` as qualification for paid links. Keep Google's published position
+distinct from the operating decision above.
+Source: https://developers.google.com/search/docs/essentials/spam-policies#link-spam
+
 ## Finish Git work before ending every session
 
 - This rule applies to every operator and AI agent, in interactive sessions and scheduled runs.
