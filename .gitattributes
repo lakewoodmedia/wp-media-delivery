@@ -1,0 +1,39 @@
+# BEGIN Lakewood managed LF rules
+# Force LF for parsed skills and scripts; preserve data and evidence files.
+.claude/skills/** -text
+.claude/skills/**/*.md text eol=lf
+.claude/skills/**/*.json text eol=lf
+.claude/skills/**/*.yaml text eol=lf
+.claude/skills/**/*.yml text eol=lf
+.claude/skills/**/*.toml text eol=lf
+.claude/skills/**/*.txt text eol=lf
+.claude/skills/**/*.js text eol=lf
+.claude/skills/**/*.ts text eol=lf
+.claude/skills/**/*.html text eol=lf
+.claude/skills/**/*.css text eol=lf
+.claude/skills/**/*.svg text eol=lf
+.claude/skills/**/*.xml text eol=lf
+.claude/skills/**/*.ini text eol=lf
+.claude/skills/**/*.cfg text eol=lf
+.claude/skills/**/*.rst text eol=lf
+.claude/skills/**/*.csv text eol=lf
+.agents/skills/** -text
+.agents/skills/**/*.md text eol=lf
+.agents/skills/**/*.json text eol=lf
+.agents/skills/**/*.yaml text eol=lf
+.agents/skills/**/*.yml text eol=lf
+.agents/skills/**/*.toml text eol=lf
+.agents/skills/**/*.txt text eol=lf
+.agents/skills/**/*.js text eol=lf
+.agents/skills/**/*.ts text eol=lf
+.agents/skills/**/*.html text eol=lf
+.agents/skills/**/*.css text eol=lf
+.agents/skills/**/*.svg text eol=lf
+.agents/skills/**/*.xml text eol=lf
+.agents/skills/**/*.ini text eol=lf
+.agents/skills/**/*.cfg text eol=lf
+.agents/skills/**/*.rst text eol=lf
+.agents/skills/**/*.csv text eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+# END Lakewood managed LF rules
